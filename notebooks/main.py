@@ -13,6 +13,7 @@ import seaborn as sns
 DATA_PATH = "./data/flight_data.csv"
 OUT_VIS = "../visuals"
 os.makedirs(OUT_VIS, exist_ok=True)
+sns.set_theme(style="whitegrid")
 
 
 # -------------------------------
@@ -56,6 +57,8 @@ def plot_airline_delay(airline_delay: pd.Series, out_path: str):
     """Plot and save the arrival delay rate per airline."""
     plt.figure(figsize=(10, 6))
     sns.barplot(x=airline_delay.index, y=airline_delay.values)
+    plt.xticks(rotation=45)
+
     plt.title("Arrival Delay Rate by Airline")
     plt.xlabel("Airline")
     plt.ylabel("Delay Rate")
