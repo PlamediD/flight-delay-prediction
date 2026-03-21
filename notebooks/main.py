@@ -16,6 +16,7 @@ os.makedirs(OUT_VIS, exist_ok=True)
 sns.set_theme(style="whitegrid")
 
 
+
 # -------------------------------
 # Functions
 # -------------------------------
@@ -88,7 +89,12 @@ def plot_delay_by_day(delay_by_day: pd.Series, out_path: str):
     plt.show()
     print(f"Visualization saved to: {out_path}")
 
-'''def compute_delay_by_month(df: pd.DataFrame) -> pd.Series:'''
+
+def get_best_worst_days(delay_by_day: pd.Series):
+    """Find the best worst days among all days."""
+    max_day = delay_by_day.idxmax()
+    min_day = delay_by_day.idxmin()
+    return max_day, min_day
 # -------------------------------
 # Main Workflow
 # -------------------------------
@@ -114,6 +120,16 @@ def main():
     plot_path_day = os.path.join(OUT_VIS, "delay_rate_by_day.png")
     plot_delay_by_day(delay_by_day, plot_path_day)
 
+    'Key insight'
+    max_day, min_day = get_best_worst_days(delay_by_day)
+
+    day_map = {
+        1: "Monday", 2: "Tuesday", 3: "Wednesday",
+        4: "Thursday", 5: "Friday", 6: "Saturday", 7: "Sunday"
+    }
+
+    print("\n--- Key Insight ---")
+    print(f"Flights are most delayed on {day_map[max_day]} and least delayed on {day_map[min_day]}.")
 
 if __name__ == "__main__":
     main()
