@@ -95,6 +95,50 @@ def get_best_worst_days(delay_by_day: pd.Series):
     max_day = delay_by_day.idxmax()
     min_day = delay_by_day.idxmin()
     return max_day, min_day
+
+#-------------------------------------------------
+#Why flights are delayed (root cause analysis)
+#-------------------------------------------------
+def get_root_cause_analysis(df: pd.DataFrame):
+    """Compute total and percentage delay by cause."""
+
+    delay_cols = [
+        "CARRIER_DELAY",
+        "WEATHER_DELAY",
+        "NAS_DELAY",
+        "SECURITY_DELAY",
+        "LATE_AIRCRAFT_DELAY"
+    ]
+
+    # Fill missing values
+    df[delay_cols] = df[delay_cols].fillna(0)
+
+    # Total delay by cause
+    delay_totals = df[delay_cols].sum().sort_values(ascending=False)
+
+    # Percentage distribution
+    delay_percent = delay_totals / delay_totals.sum()
+
+    return delay_totals, delay_percent
+
+
+def plot_delay_causes(delay_percent, out_path):
+    """Plot causes of delay."""
+    plt.figure(figsize=(8, 5))
+
+    sns.barplot(
+        x=delay_percent.index,
+        y=delay_percent.values
+    )
+
+    plt.title("Delay Causes Distribution")
+    plt.xlabel("Cause")
+    plt.ylabel("Percentage of Total Delay")
+
+    plt.xticks(rotation=30)
+
+    plt.savefig(out_path, dpi=200, bbox_inches="tight")
+    plt.show()
 # -------------------------------
 # Main Workflow
 # -------------------------------
@@ -130,6 +174,19 @@ def main():
 
     print("\n--- Key Insight ---")
     print(f"Flights are most delayed on {day_map[max_day]} and least delayed on {day_map[min_day]}.")
+
+    delay_totals, delay_percent = get_root_cause_analysis(df)
+
+    print("\n--- Total Delay by Cause ---")
+    print(delay_totals)
+
+    print("\n--- Delay Cause Distribution (%) ---")
+    print(delay_percent)
+
+    top_cause = delay_percent.idxmax()
+
+    print("\n--- Key Insight ---")
+    print(f"The primary cause of delays is {top_cause}.")
 
 if __name__ == "__main__":
     main()
