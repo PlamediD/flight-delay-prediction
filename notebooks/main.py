@@ -176,6 +176,15 @@ def main():
     print(f"Flights are most delayed on {day_map[max_day]} and least delayed on {day_map[min_day]}.")
 
     delay_totals, delay_percent = get_root_cause_analysis(df)
+    cause_map = {
+        "CARRIER_DELAY": "Airline Issues",
+        "WEATHER_DELAY": "Weather",
+        "NAS_DELAY": "Air System",
+        "SECURITY_DELAY": "Security",
+        "LATE_AIRCRAFT_DELAY": "Late Aircraft"
+    }
+
+    delay_percent.index = delay_percent.index.map(cause_map)
 
     print("\n--- Total Delay by Cause ---")
     print(delay_totals)
