@@ -139,6 +139,44 @@ def plot_delay_causes(delay_percent, out_path):
 
     plt.savefig(out_path, dpi=200, bbox_inches="tight")
     plt.show()
+
+
+def get_worst_airports(df: pd.DataFrame, top_n: int = 10) -> pd.Series:
+    """Return top N airports with highest delay rate."""
+
+    airport_delay = (
+        df.groupby("ORIGIN")["ARR_DEL15"]
+        .mean()
+        .sort_values(ascending=False)
+        .head(top_n)
+    )
+
+    print("\n--- Top 10 Worst Airports by Delay Rate ---")
+    print(airport_delay)
+
+    return airport_delay
+
+
+def plot_worst_airports(airport_delay: pd.Series, out_path: str):
+    """Plot top worst airports by delay rate."""
+
+    plt.figure(figsize=(10, 6))
+
+    sns.barplot(
+        x=airport_delay.index,
+        y=airport_delay.values
+    )
+
+    plt.title("Top 10 Worst Airports by Delay Rate")
+    plt.xlabel("Airport")
+    plt.ylabel("Delay Rate")
+
+    plt.xticks(rotation=45)
+
+    plt.savefig(out_path, dpi=200, bbox_inches="tight")
+    plt.show()
+
+    print(f"Visualization saved to: {out_path}")
 # -------------------------------
 # Main Workflow
 # -------------------------------
@@ -196,6 +234,15 @@ def main():
 
     print("\n--- Key Insight ---")
     print(f"The primary cause of delays is {top_cause}.")
+
+    airport_delay = get_worst_airports(df)
+
+    plot_path_airports = os.path.join(OUT_VIS, "worst_airports.png")
+    plot_worst_airports(airport_delay, plot_path_airports)
+    worst_airport = airport_delay.idxmax()
+
+    print("\n--- Key Insight ---")
+    print(f"{worst_airport} has the highest delay rate among analyzed airports.")
 
 if __name__ == "__main__":
     main()
