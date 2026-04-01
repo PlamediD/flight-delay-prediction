@@ -11,7 +11,7 @@ import seaborn as sns
 # Config
 # -------------------------------
 DATA_PATH = "./data/flight_data.csv"
-OUT_VIS = "../visuals"
+OUT_VIS = "visuals"
 os.makedirs(OUT_VIS, exist_ok=True)
 sns.set_theme(style="whitegrid")
 
@@ -21,10 +21,8 @@ sns.set_theme(style="whitegrid")
 # Functions
 # -------------------------------
 
-def load_data(path: str) -> pd.DataFrame:
-    """Load CSV data into a DataFrame."""
-    df = pd.read_csv(path)
-    return df
+from src.data_loader import load_data
+
 
 
 def clean_data(df: pd.DataFrame) -> pd.DataFrame:
@@ -111,13 +109,17 @@ def get_root_cause_analysis(df: pd.DataFrame):
     ]
 
     # Fill missing values
+    df = df.copy()
     df[delay_cols] = df[delay_cols].fillna(0)
+
+
 
     # Total delay by cause
     delay_totals = df[delay_cols].sum().sort_values(ascending=False)
 
     # Percentage distribution
     delay_percent = delay_totals / delay_totals.sum()
+    delay_percent = delay_percent * 100
 
     return delay_totals, delay_percent
 
@@ -133,7 +135,7 @@ def plot_delay_causes(delay_percent, out_path):
 
     plt.title("Delay Causes Distribution")
     plt.xlabel("Cause")
-    plt.ylabel("Percentage of Total Delay")
+    plt.ylabel("Percentage")
 
     plt.xticks(rotation=30)
 
