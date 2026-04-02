@@ -3,8 +3,6 @@
 # -------------------------------
 
 import os
-import pandas as pd
-import matplotlib.pyplot as plt
 import seaborn as sns
 
 # -------------------------------
@@ -16,169 +14,24 @@ os.makedirs(OUT_VIS, exist_ok=True)
 sns.set_theme(style="whitegrid")
 
 
-
-# -------------------------------
-# Functions
-# -------------------------------
-
 from src.data_loader import load_data
+from src.preprocessing import clean_data
+from src.analysis import (
+    compute_delay_stats,
+    compute_airline_delay,
+    compute_delay_by_day,
+    get_best_worst_days,
+    get_root_cause_analysis,
+    get_worst_airports
+)
+from src.visualization import (
+    plot_airline_delay,
+    plot_delay_by_day,
+    plot_delay_causes,
+    plot_worst_airports
+)
 
 
-
-def clean_data(df: pd.DataFrame) -> pd.DataFrame:
-    """Remove rows with missing arrival delay."""
-    df_clean = df.dropna(subset=["ARR_DELAY"])
-    print(f"Dataset shape after cleaning: {df_clean.shape}")
-    return df_clean
-
-
-def compute_delay_stats(df: pd.DataFrame) -> float:
-    """Compute overall arrival delay >15 min rate."""
-    delay_rate = df["ARR_DEL15"].mean() * 100
-    print(f"In January 2025, approximately {delay_rate:.2f}% of flights "
-          "experienced arrival delays of at least 15 minutes.")
-    return delay_rate
-
-
-def compute_airline_delay(df: pd.DataFrame) -> pd.Series:
-    """Compute average delay rate per airline."""
-    airline_delay = (
-        df.groupby("OP_UNIQUE_CARRIER")["ARR_DEL15"]
-        .mean()
-        .sort_values(ascending=False)
-    )
-    print("\nAirline Delay Rate:")
-    print(airline_delay)
-    return airline_delay
-
-
-def plot_airline_delay(airline_delay: pd.Series, out_path: str):
-    """Plot and save the arrival delay rate per airline."""
-    plt.figure(figsize=(10, 6))
-    sns.barplot(x=airline_delay.index, y=airline_delay.values)
-    plt.xticks(rotation=45)
-
-    plt.title("Arrival Delay Rate by Airline")
-    plt.xlabel("Airline")
-    plt.ylabel("Delay Rate")
-
-    plt.savefig(out_path, dpi=200, bbox_inches="tight")
-    plt.show()
-    print(f"Visualization saved to: {out_path}")
-
-def compute_delay_by_day(df: pd.DataFrame) -> pd.Series:
-    """Compute overall arrival delay per day."""
-    delay_by_day=(
-        df.groupby("DAY_OF_WEEK")["ARR_DEL15"].mean().sort_index()
-    )
-    print("\nDelay Rate by Day of Week:")
-    print(delay_by_day)
-    return delay_by_day
-
-def plot_delay_by_day(delay_by_day: pd.Series, out_path: str):
-    """Plot and save the delay by day."""
-    plt.figure(figsize=(8, 5))
-    sns.barplot(x=delay_by_day.index, y=delay_by_day.values)
-    plt.xticks(ticks=range(7), labels=["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"])
-    plt.title("Delay by Day of Week")
-    plt.xlabel("Day of Week")
-    plt.ylabel("Delay Rate")
-    plt.savefig(out_path, dpi=200, bbox_inches="tight")
-    plt.show()
-    print(f"Visualization saved to: {out_path}")
-
-
-def get_best_worst_days(delay_by_day: pd.Series):
-    """Find the best worst days among all days."""
-    max_day = delay_by_day.idxmax()
-    min_day = delay_by_day.idxmin()
-    return max_day, min_day
-
-#-------------------------------------------------
-#Why flights are delayed (root cause analysis)
-#-------------------------------------------------
-def get_root_cause_analysis(df: pd.DataFrame):
-    """Compute total and percentage delay by cause."""
-
-    delay_cols = [
-        "CARRIER_DELAY",
-        "WEATHER_DELAY",
-        "NAS_DELAY",
-        "SECURITY_DELAY",
-        "LATE_AIRCRAFT_DELAY"
-    ]
-
-    # Fill missing values
-    df = df.copy()
-    df[delay_cols] = df[delay_cols].fillna(0)
-
-
-
-    # Total delay by cause
-    delay_totals = df[delay_cols].sum().sort_values(ascending=False)
-
-    # Percentage distribution
-    delay_percent = delay_totals / delay_totals.sum()
-    delay_percent = delay_percent * 100
-
-    return delay_totals, delay_percent
-
-
-def plot_delay_causes(delay_percent, out_path):
-    """Plot causes of delay."""
-    plt.figure(figsize=(8, 5))
-
-    sns.barplot(
-        x=delay_percent.index,
-        y=delay_percent.values
-    )
-
-    plt.title("Delay Causes Distribution")
-    plt.xlabel("Cause")
-    plt.ylabel("Percentage")
-
-    plt.xticks(rotation=30)
-
-    plt.savefig(out_path, dpi=200, bbox_inches="tight")
-    plt.show()
-
-
-def get_worst_airports(df: pd.DataFrame, top_n: int = 10) -> pd.Series:
-    """Return top N airports with highest delay rate."""
-
-    airport_delay = (
-        df.groupby("ORIGIN")["ARR_DEL15"]
-        .mean()
-        .sort_values(ascending=False)
-        .head(top_n)
-    )
-
-    print("\n--- Top 10 Worst Airports by Delay Rate ---")
-    print(airport_delay)
-
-    return airport_delay
-
-
-def plot_worst_airports(airport_delay: pd.Series, out_path: str):
-    """Plot top worst airports by delay rate."""
-
-    plt.figure(figsize=(10, 6))
-
-    sns.barplot(
-        x=airport_delay.index,
-        y=airport_delay.values
-    )
-
-    plt.title("Top 10 Worst Airports by Delay Rate")
-    plt.xlabel("Airport")
-    plt.ylabel("Delay Rate")
-
-    plt.xticks(rotation=45)
-
-    plt.savefig(out_path, dpi=200, bbox_inches="tight")
-    plt.show()
-
-    print(f"Visualization saved to: {out_path}")
 # -------------------------------
 # Main Workflow
 # -------------------------------
