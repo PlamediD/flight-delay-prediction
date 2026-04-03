@@ -77,8 +77,16 @@ The analysis highlights the **top 10 airports with the highest delay rates**, wh
 
 ## 📊 Sample Visualizations
 
-*(Add screenshots from your `/visuals` folder here)*
+## 📊 Sample Visualizations
 
+### Arrival Delay Rate by Airline
+![Airline Delay](visuals/arrival_delay_rate_airline.png)
+
+### Delay by Day of Week
+![Delay by Day](visuals/delay_rate_by_day.png)
+
+### Worst Airports by Delay Rate
+![Worst Airports](visuals/worst_airports.png)
 ---
 
 ## 🚀 How to Run the Project
