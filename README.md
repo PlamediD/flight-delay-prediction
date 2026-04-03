@@ -75,7 +75,6 @@ The analysis highlights the **top 10 airports with the highest delay rates**, wh
 
 ---
 
-## 📊 Sample Visualizations
 
 ## 📊 Sample Visualizations
 
