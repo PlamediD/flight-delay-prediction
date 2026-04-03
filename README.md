@@ -79,8 +79,6 @@ The analysis highlights the **top 10 airports with the highest delay rates**, wh
 ## 📊 Sample Visualizations
 
 ### Arrival Delay Rate by Airline
-
-### Arrival Delay Rate by Airline
 <p align="center">
   <img src="visuals/arrival_delay_rate_airline.png" width="600" alt="">
 </p>
@@ -139,7 +137,7 @@ project/
 ## 👤 Author
 
 **Plamedi Diakubama**
-Aspiring Data Analyst | Data Science Graduate Student
+Aspiring Data Analyst |M.S Data Analysis ( Concentration in Data Science), WGU 2025 
 
 ---
 
