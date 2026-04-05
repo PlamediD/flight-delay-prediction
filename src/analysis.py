@@ -51,3 +51,32 @@ def get_worst_airports(df: pd.DataFrame, top_n: int = 10) -> pd.Series:
         .sort_values(ascending=False)
         .head(top_n)
     )
+
+def generate_summary(
+    delay_rate,
+    airline_delay,
+    delay_by_day,
+    delay_percent,
+    airport_delay
+):
+    """Generate a clean summary report."""
+
+    worst_airline = airline_delay.idxmax()
+    worst_day = delay_by_day.idxmax()
+    top_cause = delay_percent.idxmax()
+    worst_airport = airport_delay.idxmax()
+
+    day_map = {
+        1: "Monday", 2: "Tuesday", 3: "Wednesday",
+        4: "Thursday", 5: "Friday", 6: "Saturday", 7: "Sunday"
+    }
+
+    print("\n==============================")
+    print("       SUMMARY REPORT")
+    print("==============================")
+
+    print(f"Overall Delay Rate: {delay_rate:.2f}%")
+    print(f"Worst Airline: {worst_airline}")
+    print(f"Worst Day: {day_map[worst_day]}")
+    print(f"Top Delay Cause: {top_cause}")
+    print(f"Worst Airport: {worst_airport}")

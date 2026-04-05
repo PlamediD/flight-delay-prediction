@@ -30,7 +30,7 @@ from src.visualization import (
     plot_delay_causes,
     plot_worst_airports
 )
-
+from src.analysis import generate_summary
 
 # -------------------------------
 # Main Workflow
@@ -48,16 +48,17 @@ def main():
 
 
 
+
     # Plot & save figure
-    'Arrival Delay Rate by Airline'
+    """Arrival Delay Rate by Airline"""
     plot_path = os.path.join(OUT_VIS, "arrival_delay_rate_airline.png")
     plot_airline_delay(airline_delay, plot_path)
 
-    'Delay by day of the week visualization'
+    """Delay by day of the week visualization"""
     plot_path_day = os.path.join(OUT_VIS, "delay_rate_by_day.png")
     plot_delay_by_day(delay_by_day, plot_path_day)
 
-    'Key insight'
+    """Key insight"""
     max_day, min_day = get_best_worst_days(delay_by_day)
 
     day_map = {
@@ -99,5 +100,30 @@ def main():
     print("\n--- Key Insight ---")
     print(f"{worst_airport} has the highest delay rate among analyzed airports.")
 
+    # Compute statistics
+    delay_rate = compute_delay_stats(df)
+    airline_delay = compute_airline_delay(df)
+    delay_by_day = compute_delay_by_day(df)
+
+    # Root cause
+    delay_totals, delay_percent = get_root_cause_analysis(df)
+
+    # Airport analysis
+    airport_delay = get_worst_airports(df)
+
+    # -------------------------------
+    # Summary Report
+    # -------------------------------
+    generate_summary(
+        delay_rate,
+        airline_delay,
+        delay_by_day,
+        delay_percent,
+        airport_delay
+    )
+
+
+
 if __name__ == "__main__":
     main()
+
