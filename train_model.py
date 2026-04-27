@@ -57,3 +57,18 @@ print(f"Accuracy: {accuracy:.2f}")
 
 print("\nClassification Report:")
 print(classification_report(y_test, y_pred))
+
+# -------------------------------
+# Feature Importance
+# -------------------------------
+
+
+importance = pd.DataFrame({
+    "Feature": X.columns,
+    "Coefficient": model.coef_[0]
+})
+
+importance = importance.sort_values(by="Coefficient", ascending=False)
+
+print("\n--- Feature Importance ---")
+print(importance)
