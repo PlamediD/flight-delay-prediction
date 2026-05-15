@@ -5,6 +5,7 @@ from sklearn.metrics import accuracy_score, classification_report
 
 from src.data_loader import load_data
 from src.preprocessing import clean_data
+from sklearn.metrics import confusion_matrix
 
 # -------------------------------
 # Load & Clean Data
@@ -57,6 +58,23 @@ print(f"Accuracy: {accuracy:.2f}")
 
 print("\nClassification Report:")
 print(classification_report(y_test, y_pred))
+# -------------------------------
+# Confusion Matrix
+# -------------------------------
+
+
+cm = confusion_matrix(y_test, y_pred)
+
+print("\nConfusion Matrix:")
+print(cm)
+
+tn, fp, fn, tp = cm.ravel()
+
+print("\nDetailed Breakdown:")
+print(f"True Negatives: {tn}")
+print(f"False Positives: {fp}")
+print(f"False Negatives: {fn}")
+print(f"True Positives: {tp}")
 
 # -------------------------------
 # Feature Importance
